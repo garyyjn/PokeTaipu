@@ -5,5 +5,6 @@ typeList = ["Fire", "Water", "Grass", "Eletric", "Psychic", "Steel", "Normal", "
 
 ## Training TO-DO
 ### Data cleaning
-#[checkbox:unchecked] generate RGB matrixes for image
-#[checkbox:unchecked] assign type to each image
+[ ] unchecked # [checkbox:unchecked]
+[ ] generate RGB matrixes for image
+[ ] assign type to each image
