@@ -7,3 +7,6 @@ typeList = ["Fire", "Water", "Grass", "Eletric", "Psychic", "Steel", "Normal", "
 ### Data cleaning
 - [ ] generate RGB matrixes for image
 - [ ] assign type to each image
+
+
+## Webfront TO-DO
