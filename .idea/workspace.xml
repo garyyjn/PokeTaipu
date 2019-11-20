@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="187ad840-172e-45a3-a0ab-c24c542b58e6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/PokeTaipu.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ImageLabeling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataCleaning/README.md" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,24 +12,9 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pokedex_type_onehot.csv">
-          <provider editor-type-id="csv-table-editor">
-            <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-          </provider>
-          <provider selected="true" editor-type-id="csv-text-editor" />
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ImageLabeling.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="3" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/Deep Learning Models/init">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -73,6 +54,11 @@
             <path>
               <item name="PokeTaipu" type="b2602c69:ProjectViewProjectNode" />
               <item name="PokeTaipu" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PokeTaipu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PokeTaipu" type="462c0819:PsiDirectoryNode" />
+              <item name="Deep Learning Models" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -115,11 +101,11 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24972677" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24972677" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.32937366" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.32937366" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -149,6 +135,9 @@
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deep Learning Models/init">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
