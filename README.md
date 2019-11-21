@@ -13,6 +13,11 @@ https://www.kaggle.com/abcsds/pokemon
 ### Data cleaning
 - [ ] generate RGB matrixes for image
 - [ ] assign type to each image
+- [ ] Write scripts that convert both JPG and PNG to numpy arrays sized 224 * 224 * 3
+- [ ] Generate data matrixes/labels of various sizes
+
+### Model Building
+- [ ] Build a shallow 2 layer conv model
 
 
 ## Webfront TO-DO
