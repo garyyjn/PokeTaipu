@@ -5,6 +5,8 @@ typeList = ["Fire", "Water", "Grass", "Eletric", "Psychic", "Steel", "Normal", "
 
 ### Datasets
 
+https://www.kaggle.com/thedagger/pokemon-generation-one#2fd28e699b7c4208acd1637fbad5df2d.jpeg
+
 https://www.kaggle.com/brkurzawa/original-150-pokemon-image-search-results
 
 https://www.kaggle.com/abcsds/pokemon
