@@ -1,11 +1,13 @@
 # Source: https://github.com/pytorch/examples/blob/master/mnist/main.py
 
 # TODO: Add Pokemon data (from Gary)
+# TODO: Modify parts with data loader
 # TODO: Print image-label corrolation
 
 from __future__ import print_function
 import argparse
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -14,7 +16,7 @@ from torch.optim.lr_scheduler import StepLR
 
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self): 
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
@@ -101,6 +103,7 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
+
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=True, download=True,
                        transform=transforms.Compose([
@@ -127,6 +130,10 @@ def main():
     if args.save_model:
         torch.save(model.state_dict(), "mnist_cnn.pt")
 
+def main2():
+    # Load data
+    from_numpy_to_tensor = torch.from_numpy(array)
+    print("{}\n".format(from_numpy_to_tensor))
 
 if __name__ == '__main__':
-    main()
+    main2()
