@@ -1,3 +1,8 @@
+# Source: https://github.com/pytorch/examples/blob/master/mnist/main.py
+
+# TODO: Add Pokemon data (from Gary)
+# TODO: Print image-label corrolation
+
 from __future__ import print_function
 import argparse
 import torch
@@ -34,7 +39,7 @@ class Net(nn.Module):
 
 
 def train(args, model, device, train_loader, optimizer, epoch):
-    model.train()
+    model.train() # Sets the module in training mode
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -49,7 +54,7 @@ def train(args, model, device, train_loader, optimizer, epoch):
 
 
 def test(args, model, device, test_loader):
-    model.eval()
+    model.eval() # Sets the module in evaluation mode
     test_loss = 0
     correct = 0
     with torch.no_grad():
@@ -69,7 +74,7 @@ def test(args, model, device, test_loader):
 
 def main():
     # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
+    parser = argparse.ArgumentParser(description='Conv Net Using Pytorch To Classify Pokemon')
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
@@ -86,7 +91,6 @@ def main():
                         help='random seed (default: 1)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='how many batches to wait before logging training status')
-
     parser.add_argument('--save-model', action='store_true', default=False,
                         help='For Saving the current Model')
     args = parser.parse_args()
