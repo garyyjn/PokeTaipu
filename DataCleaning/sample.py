@@ -13,6 +13,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
+import loader
 
 
 class Net(nn.Module):
@@ -132,8 +133,13 @@ def main():
 
 def main2():
     # Load data
-    from_numpy_to_tensor = torch.from_numpy(array)
-    print("{}\n".format(from_numpy_to_tensor))
+    image, name, type = loader.load_image_name_type()
+    print(image[0].shape)
+    print(name[0])
+    print(type[0])
+    # Convert data. Make it good for training
+    #from_numpy_to_tensor = torch.from_numpy(array)
+    #print("{}\n".format(from_numpy_to_tensor))
 
 if __name__ == '__main__':
     main2()

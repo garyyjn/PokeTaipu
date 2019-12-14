@@ -11,18 +11,20 @@ def load_image_name_type(data_directory = data_directory):
     name = name.astype('<S3')
     return image, name, type
 
-#image, name, type = load_image_name_type(data_directory)
-'''
-print(image.shape)
-print(name.shape)
-print(type.shape)
-for i, n, t, count in zip(image,name,type, range(name.size)):
-    if count == 200:
-        break
-    print(n)
-    print(t)
-    print(i.shape)
-'''
+if __name__ == '__main__':
+    image, name, type = load_image_name_type()
+    print(image[0].shape)
+    print(name[0])
+    print(type[0])
 
-a,b,c = load_image_name_type()
-print(a.shape)
+    '''
+    print(image.shape)
+    print(name.shape)
+    print(type.shape)
+    for i, n, t, count in zip(image,name,type, range(name.size)):
+        if count == 200:
+            break
+        print(n)
+        print(t)
+        print(i.shape)
+    '''
