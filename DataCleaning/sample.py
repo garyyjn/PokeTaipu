@@ -1,8 +1,6 @@
 # Source: https://github.com/pytorch/examples/blob/master/mnist/main.py
 
-# TODO: Add Pokemon data (from Gary)
 # TODO: Modify parts with data loader
-# TODO: Print image-label corrolation
 
 from __future__ import print_function
 import argparse
@@ -14,6 +12,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 import loader
+import random
 
 
 class Net(nn.Module):
@@ -41,9 +40,18 @@ class Net(nn.Module):
         return output
 
 
-def train(args, model, device, train_loader, optimizer, epoch):
+def train(args, model, device, train_data, train_target, optimizer, epoch):
     model.train() # Sets the module in training mode
-    for batch_idx, (data, target) in enumerate(train_loader):
+    # TODO: Add the last half batch
+    batch_num = int(len(train_data))
+
+    for batch_idx in range(batch_num):
+        start_idx = batch_idx * args.batch_size
+        end_idx = (batch_idx + 1) * args.batch_size
+        data = train_data[start_idx:end_idx]
+        target = train_target[start_idx:end_idx]
+
+        # Below is original code
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -52,27 +60,27 @@ def train(args, model, device, train_loader, optimizer, epoch):
         optimizer.step()
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
+                epoch, batch_idx * len(data), len(train_data),
+                100. * batch_idx / len(train_data), loss.item()))
 
 
-def test(args, model, device, test_loader):
+def test(args, model, device, test_data, test_target):
     model.eval() # Sets the module in evaluation mode
     test_loss = 0
     correct = 0
     with torch.no_grad():
-        for data, target in test_loader:
+        for data, target in (test_data, test_target):
             data, target = data.to(device), target.to(device)
             output = model(data)
             test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
-    test_loss /= len(test_loader.dataset)
+    test_loss /= len(test_data)
 
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+        test_loss, correct, len(test_data),
+        100. * correct / len(test_data)))
 
 
 def main():
@@ -105,41 +113,58 @@ def main():
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 
-    train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    train_data, test_data = data()
 
     model = Net().to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
-        train(args, model, device, train_loader, optimizer, epoch)
-        test(args, model, device, test_loader)
+        train(args, model, device, train_data, optimizer, epoch)
+        test(args, model, device, test_data)
         scheduler.step()
 
     if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
+        torch.save(model.state_dict(), "poketaipu_cnn.pt")
 
-def main2():
+def data():
     # Load data
     image, name, type = loader.load_image_name_type()
-    print(image[0].shape)
-    print(name[0])
-    print(type[0])
+
     # Convert data. Make it good for training
-    #from_numpy_to_tensor = torch.from_numpy(array)
-    #print("{}\n".format(from_numpy_to_tensor))
+    image_tensor = torch.from_numpy(image).float()
+    type_tensor = torch.from_numpy(type).float()
+
+    train_data = []
+    test_data = []
+
+    # First add everything to train_data
+    for i in range(len(torch.from_numpy(image).float())):
+        data = []
+        data.append(image_tensor[i])
+        data.append(type_tensor[i])
+        train_data.append(data)
+        print(data)
+        input()
+
+    # Then shuffle and move 20% to test_data
+    random.shuffle(train_data)
+    for i in range(int(len(torch.from_numpy(image).float()) / 5)):
+        test_data.append(train_data[0])
+        train_data.pop(0)
+
+    return train_data, test_data
+
+def permutation(image, labels):
+    new_image = np.ones(image.shape, dtype=np.int)
+    new_label = np.ones(labels.shape, dtype=np.int)
+    sample_num = new_image.shape[0]
+    perm_index = list(range(sample_num))
+    random.shuffle(perm_index)
+    for i in range(sample_num):
+        new_image[i] = image[perm_index[i]]
+        new_label[i] = labels[perm_index[i]]
+    return new_image, new_label
 
 if __name__ == '__main__':
-    main2()
+    main()
