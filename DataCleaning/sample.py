@@ -18,18 +18,19 @@ import random
 class Net(nn.Module):
     def __init__(self): 
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
+        self.conv1 = nn.Conv2d(3, 16, 3, 1)
+        self.conv2 = nn.Conv2d(16, 28, 3, 1)
         self.dropout1 = nn.Dropout2d(0.25)
         self.dropout2 = nn.Dropout2d(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.fc1 = nn.Linear(36288, 128) # 128 => 256?
+        self.fc2 = nn.Linear(128, 18)
 
     def forward(self, x):
         x = self.conv1(x)
         x = F.relu(x)
-        x = self.conv2(x)
         x = F.max_pool2d(x, 2)
+        x = self.conv2(x)
+        x = F.max_pool2d(x, 3)
         x = self.dropout1(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
@@ -43,7 +44,7 @@ class Net(nn.Module):
 def train(args, model, device, train_data, train_target, optimizer, epoch):
     model.train() # Sets the module in training mode
     # TODO: Add the last half batch
-    batch_num = int(len(train_data))
+    batch_num = int(len(train_data) / args.batch_size)
 
     for batch_idx in range(batch_num):
         start_idx = batch_idx * args.batch_size
@@ -61,19 +62,33 @@ def train(args, model, device, train_data, train_target, optimizer, epoch):
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_data),
-                100. * batch_idx / len(train_data), loss.item()))
+                100. * batch_idx / batch_num, loss.item()))
 
 
 def test(args, model, device, test_data, test_target):
     model.eval() # Sets the module in evaluation mode
     test_loss = 0
     correct = 0
+
+    batch_num = int(len(test_data) / args.test_batch_size)
+
     with torch.no_grad():
-        for data, target in (test_data, test_target):
+        for batch_idx in range(batch_num):
+            start_idx = batch_idx * args.test_batch_size
+            end_idx = (batch_idx + 1) * args.test_batch_size
+            data = test_data[start_idx:end_idx]
+            target = test_target[start_idx:end_idx]
+
             data, target = data.to(device), target.to(device)
             output = model(data)
             test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            '''
+            print(pred)
+            print(target)
+            print(pred.eq(target.view_as(pred)))
+            input()
+            '''
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_data)
@@ -88,7 +103,7 @@ def main():
     parser = argparse.ArgumentParser(description='Conv Net Using Pytorch To Classify Pokemon')
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
+    parser.add_argument('--test-batch-size', type=int, default=32, metavar='N',
                         help='input batch size for testing (default: 1000)')
     parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
@@ -100,7 +115,7 @@ def main():
                         help='disables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+    parser.add_argument('--log-interval', type=int, default=1, metavar='N',
                         help='how many batches to wait before logging training status')
     parser.add_argument('--save-model', action='store_true', default=False,
                         help='For Saving the current Model')
@@ -113,15 +128,15 @@ def main():
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 
-    train_data, test_data = data()
+    train_data, train_target, test_data, test_target = data()
 
     model = Net().to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
-        train(args, model, device, train_data, optimizer, epoch)
-        test(args, model, device, test_data)
+        train(args, model, device, train_data, train_target, optimizer, epoch)
+        test(args, model, device, test_data, test_target)
         scheduler.step()
 
     if args.save_model:
@@ -130,30 +145,20 @@ def main():
 def data():
     # Load data
     image, name, type = loader.load_image_name_type()
+    # Shuffle data
+    image, type = permutation(image, type)
+    type = np.argmax(type, axis = 1)
+    train_sample_num = int(image.shape[0] * 0.8)
+    train_data = image[:train_sample_num]
+    train_target = type[:train_sample_num]
+    test_data = image[train_sample_num:]
+    test_target = type[train_sample_num:]
+    train_data = torch.from_numpy(train_data).float()
+    test_data = torch.from_numpy(test_data).float()
+    train_target = torch.from_numpy(train_target).long()
+    test_target = torch.from_numpy(test_target).long()
 
-    # Convert data. Make it good for training
-    image_tensor = torch.from_numpy(image).float()
-    type_tensor = torch.from_numpy(type).float()
-
-    train_data = []
-    test_data = []
-
-    # First add everything to train_data
-    for i in range(len(torch.from_numpy(image).float())):
-        data = []
-        data.append(image_tensor[i])
-        data.append(type_tensor[i])
-        train_data.append(data)
-        print(data)
-        input()
-
-    # Then shuffle and move 20% to test_data
-    random.shuffle(train_data)
-    for i in range(int(len(torch.from_numpy(image).float()) / 5)):
-        test_data.append(train_data[0])
-        train_data.pop(0)
-
-    return train_data, test_data
+    return train_data, train_target, test_data, test_target
 
 def permutation(image, labels):
     new_image = np.ones(image.shape, dtype=np.int)
