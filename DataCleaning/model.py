@@ -11,7 +11,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
-import loader, labelImages
+import loader
+from labelImages import jpgtoarray
 import random
 
 
@@ -170,9 +171,15 @@ def permutation(image, labels):
 
 def classify(path):
     # Turn the image in the path into a numpy array
-    labelImages.jpgtoarray(path)
+    I = jpgtoarray(path)
+    I = torch.from_numpy(I).float()
+    print(I)
 
-    # Classify the image by running a forward pass
+    # Load the saved model and classify the image by running a forward pass
+    model = Net()
+    model.load_state_dict(torch.load('poketaipu_cnn.pt'))
+    output = model(data)
 
 if __name__ == '__main__':
-    main()
+    #main()
+    classify('c:/Users/Roxie/Desktop/p.jpg')
