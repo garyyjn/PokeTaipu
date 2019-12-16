@@ -172,14 +172,19 @@ def permutation(image, labels):
 def classify(path):
     # Turn the image in the path into a numpy array
     I = jpgtoarray(path)
-    I = torch.from_numpy(I).float()
-    print(I)
+    I = I.T
+    I2 = np.ones((1, 3, 225, 225))
+    I2[0] = I
+    I = torch.from_numpy(I2).float()
 
     # Load the saved model and classify the image by running a forward pass
     model = Net()
     model.load_state_dict(torch.load('poketaipu_cnn.pt'))
-    output = model(data)
+    output = model(I)
+    pred = output.argmax()
+
+    return pred.item()
 
 if __name__ == '__main__':
     #main()
-    classify('c:/Users/Roxie/Desktop/p.jpg')
+    print(classify('c:/Users/Roxie/Desktop/p.jpg'))
